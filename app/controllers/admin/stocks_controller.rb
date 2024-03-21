@@ -12,6 +12,7 @@ class Admin::StocksController < AdminController
 
   # GET /admin/stocks/new
   def new
+    @admin_product = Product.find(params[:product_id])
     @admin_stock = Stock.new
   end
 
@@ -21,11 +22,12 @@ class Admin::StocksController < AdminController
 
   # POST /admin/stocks or /admin/stocks.json
   def create
-    @admin_stock = Stock.new(admin_stock_params)
+    @admin_product = Product.find(params[:product_id])
+    @admin_stock = @admin_product.stocks.new(admin_stock_params)
 
     respond_to do |format|
       if @admin_stock.save
-        format.html { redirect_to admin_stock_url(@admin_stock), notice: "Stock was successfully created." }
+        format.html { redirect_to admin_product_stock_url(@admin_product, @admin_stock), notice: "Stock was successfully created." }
         format.json { render :show, status: :created, location: @admin_stock }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -65,6 +67,6 @@ class Admin::StocksController < AdminController
 
     # Only allow a list of trusted parameters through.
     def admin_stock_params
-      params.require(:admin_stock).permit(:product_id, :amount, :size)
+      params.require(:stock).permit(:amount, :size)
     end
 end
