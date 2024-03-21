@@ -18,6 +18,8 @@ class Admin::StocksController < AdminController
 
   # GET /admin/stocks/1/edit
   def edit
+    @admin_product = Product.find(params[:product_id])
+    @admin_stock = Stock.find(params[:id])
   end
 
   # POST /admin/stocks or /admin/stocks.json
@@ -27,7 +29,7 @@ class Admin::StocksController < AdminController
 
     respond_to do |format|
       if @admin_stock.save
-        format.html { redirect_to admin_product_stock_url(@admin_product, @admin_stock), notice: "Stock was successfully created." }
+        format.html { redirect_to admin_product_stock_url(@admin_stock.product, @admin_stock), notice: "Stock was successfully created." }
         format.json { render :show, status: :created, location: @admin_stock }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -40,7 +42,7 @@ class Admin::StocksController < AdminController
   def update
     respond_to do |format|
       if @admin_stock.update(admin_stock_params)
-        format.html { redirect_to admin_stock_url(@admin_stock), notice: "Stock was successfully updated." }
+        format.html { redirect_to admin_product_stock_url(@admin_stock), notice: "Stock was successfully updated." }
         format.json { render :show, status: :ok, location: @admin_stock }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -54,7 +56,7 @@ class Admin::StocksController < AdminController
     @admin_stock.destroy
 
     respond_to do |format|
-      format.html { redirect_to admin_stocks_url, notice: "Stock was successfully destroyed." }
+      format.html { redirect_to admin_product_stocks_url, notice: "Stock was successfully destroyed." }
       format.json { head :no_content }
     end
   end
