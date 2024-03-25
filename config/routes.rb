@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :orders
     resources :products do
-        resources :stocks    
+      resources :stocks
     end
     resources :categories
   end
@@ -17,4 +17,5 @@ Rails.application.routes.draw do
   end
 
   get "admin" => "admin#index"
+  get "category" => "category#index"
 end
