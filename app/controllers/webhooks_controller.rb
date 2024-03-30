@@ -24,10 +24,15 @@ class WebhooksController < ApplicationController
     when "checkout.session.completed"
       session = event.data.object
       shipping_details = session["shipping_details"]
-      address = "#{shipping_details["address"]["line1"]} #{shipping_details["address"]["city"]}, #{shipping_details["address"]["state"]} #{shipping_details["address"]["postal_code"]}"
+
+      if shipping_details
+        address = "#{shipping_details["address"]["line1"]} #{shipping_details["address"]["city"]}, #{shipping_details["address"]["state"]} #{shipping_details["address"]["postal_code"]}"
+      else
+        adress = ""
+      end
 
       order = Order.create!(
-        customer_email: session["customer_email"]["email"],
+        customer_email: session["customer_details"]["email"],
         total: session["amount_total"],
         address: address,
         fulfilled: false,
@@ -43,7 +48,7 @@ class WebhooksController < ApplicationController
         product = Stripe::Product::retrieve(item["price"]["product"])
         product_id = product["metadata"]["product_id"].to_i
         OrderProduct.create!(order: order, product_id: product_id, quantity: item["quantity"], size: product["metadata"]["size"])
-        ProductStock.find(product["metadata"]["product_stock_id"]).decrement!(:amount, item["quantity"])
+        Stock.find(product["metadata"]["product_stock_id"]).decrement!(:amount, item["quantity"])
       end
     else
       puts "Unhandled event type: #{event.type}"
