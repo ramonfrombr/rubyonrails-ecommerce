@@ -71,12 +71,16 @@ export default class extends Controller {
       body: JSON.stringify(payload)
     }).then((response) => {
       if (response.ok) {
-        window.location.href = body.url
+        response.json().then((body) => {
+          window.location.href = body.url
+        })
       } else {
-        const errorEl = document.createElement('div')
-        errorEl.innerText = `There was an error processing your order. ${body.error}`
-        let errorContainer = document.getElementById('errorContainer')
-        errorContainer.appendChild(errorEl)
+        response.json().then((body) => {
+          const errorEl = document.createElement('div')
+          errorEl.innerText = `There was an error processing your order. ${body.error}`
+          let errorContainer = document.getElementById('errorContainer')
+          errorContainer.appendChild(errorEl)
+        })
       }
     })
   }
